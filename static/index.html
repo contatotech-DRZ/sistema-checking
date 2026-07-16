@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Monitor de Sistema</h1>
+    <p>CPU: <span id="cpu">--</span>%</p>
+    <p>RAM: <span id="ram">--</span>%</p>
+
+    <script>
+        async function updateStats() {
+            const response = await fetch('/api/stats');
+            const data = await response.json();
+            document.getElementById('cpu').innerText = data.cpu;
+            document.getElementById('ram').innerText = data.ram;
+        }
+        // Atualiza a cada 2 segundos
+        setInterval(updateStats, 2000);
+    </script>
+</body>
+</html>
