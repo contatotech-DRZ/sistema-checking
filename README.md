@@ -23,19 +23,23 @@ Como Rodar o Projeto
 
 Crie e ative um ambiente virtual (recomendado):
 
-Bash
+```bash
 python -m venv venv
- No Windows:
+
+# No Windows:
 .\venv\Scripts\Activate.ps1
+
 Instale as dependências:
 
-Bash
+``bash
 pip install fastapi uvicorn psutil
+
 Inicie o servidor:
 
-Bash
 uvicorn main:app --reload
+
 Acesse no navegador:
+
 Abra http://127.0.0.1:8000
 
 Desenvolvido por Adriano Aquino.
