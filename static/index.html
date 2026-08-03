@@ -1,19 +1,125 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Monitoramento de Hardware</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-cpu: #38bdf8;
+            --accent-mem: #4ade80;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: #94a3b8;
+        }
+
+        .value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        #cpu-value { color: var(--accent-cpu); }
+        #mem-value { color: var(--accent-mem); }
+
+        .details {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        footer {
+            margin-top: 40px;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+    </style>
+</head>
 <body>
-    <h1>Monitor de Sistema</h1>
-    <p>CPU: <span id="cpu">--</span>%</p>
-    <p>RAM: <span id="ram">--</span>%</p>
+
+    <h1>Dashboard de Monitoramento</h1>
+
+    <div class="dashboard-container">
+        <!-- Card CPU -->
+        <div class="card">
+            <h2>Uso de CPU</h2>
+            <div id="cpu-value" class="value">--%</div>
+        </div>
+
+        <!-- Card Memória -->
+        <div class="card">
+            <h2>Uso de Memória RAM</h2>
+            <div id="mem-value" class="value">--%</div>
+            <div id="mem-details" class="details">Carregando detalhes...</div>
+        </div>
+    </div>
+
+    <footer>Desenvolvido por Adriano Aquino</footer>
 
     <script>
-        async function updateStats() {
-            const response = await fetch('/api/stats');
-            const data = await response.json();
-            document.getElementById('cpu').innerText = data.cpu;
-            document.getElementById('ram').innerText = data.ram;
+        async function fetchStats() {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/stats');
+                if (!response.ok) throw new Error('Erro ao buscar dados do servidor');
+                
+                const data = await response.json();
+
+                // Atualiza CPU
+                document.getElementById('cpu-value').innerText = `${data.cpu.toFixed(1)}%`;
+
+                // Atualiza Memória
+                document.getElementById('mem-value').innerText = `${data.memory.percent.toFixed(1)}%`;
+                document.getElementById('mem-details').innerText = 
+                    `Usado: ${data.memory.used} GB / Total: ${data.memory.total} GB`;
+
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+            }
         }
-        // Atualiza a cada 2 segundos
-        setInterval(updateStats, 2000);
+
+        // Executa imediatamente ao carregar e depois a cada 2 segundos
+        fetchStats();
+        setInterval(fetchStats, 2000);
     </script>
 </body>
 </html>
